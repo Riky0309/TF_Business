@@ -465,7 +465,21 @@ plt.title('Frecuencia de consumo y satisfacción del usuario')
 plt.show()
 
 """**4. ¿Cómo influye el género de los usuarios en la efectividad del algoritmo de recomendaciones?**"""
+# Verifica que ambas columnas existan
+if 'Gender' in df_netflix.columns and 'Satisfaction_score' in df_netflix.columns:
+    # Elimina filas con nulos
+    df_temp = df_netflix[['Gender', 'Satisfaction_score']].dropna()
 
+    # Convierte Satisfaction_score a numérico
+    df_temp['Satisfaction_score'] = pd.to_numeric(df_temp['Satisfaction_score'], errors='coerce')
+
+    st.subheader("🎯 Boxplot: Satisfacción según Género")
+
+    fig, ax = plt.subplots()
+    sns.boxplot(x='Gender', y='Satisfaction_score', data=df_temp, ax=ax)
+    st.pyplot(fig)
+else:
+    st.warning("⚠️ Las columnas 'Gender' o 'Satisfaction_score' no existen en el DataFrame.")
 plt.figure(figsize=(10,6))
 sns.boxplot(x='Gender', y='Satisfaction_score', data=df_netflix)
 plt.title('Efectividad de las recomendaciones según el género del usuario')
