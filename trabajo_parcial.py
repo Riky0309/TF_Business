@@ -464,26 +464,31 @@ sns.scatterplot(x='Freq', y='Satisfaction_score', data=df_netflix)
 plt.title('Frecuencia de consumo y satisfacción del usuario')
 plt.show()
 
-"""**4. ¿Cómo influye el género de los usuarios en la efectividad del algoritmo de recomendaciones?**"""
-# Verifica que ambas columnas existan
+
+st.header(" 4. ¿Cómo influye el género de los usuarios en la efectividad del algoritmo de recomendaciones?")
+
+# Verifica si las columnas existen
 if 'Gender' in df_netflix.columns and 'Satisfaction_score' in df_netflix.columns:
-    # Elimina filas con nulos
-    df_temp = df_netflix[['Gender', 'Satisfaction_score']].dropna()
+    # Filtra las columnas necesarias y limpia
+    df_temp = df_netflix[['Gender', 'Satisfaction_score']].copy()
+    df_temp = df_temp.dropna(subset=['Gender', 'Satisfaction_score'])
 
     # Convierte Satisfaction_score a numérico
     df_temp['Satisfaction_score'] = pd.to_numeric(df_temp['Satisfaction_score'], errors='coerce')
 
-    st.subheader("🎯 Boxplot: Satisfacción según Género")
+    # Elimina cualquier fila con score no convertible
+    df_temp = df_temp.dropna(subset=['Satisfaction_score'])
 
-    fig, ax = plt.subplots()
-    sns.boxplot(x='Gender', y='Satisfaction_score', data=df_temp, ax=ax)
-    st.pyplot(fig)
+    if not df_temp.empty:
+        # Gráfico
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.boxplot(x='Gender', y='Satisfaction_score', data=df_temp, ax=ax)
+        ax.set_title("Distribución de puntuación de satisfacción por género")
+        st.pyplot(fig)
+    else:
+        st.warning("⚠️ No hay suficientes datos válidos para graficar.")
 else:
-    st.warning("⚠️ Las columnas 'Gender' o 'Satisfaction_score' no existen en el DataFrame.")
-plt.figure(figsize=(10,6))
-sns.boxplot(x='Gender', y='Satisfaction_score', data=df_netflix)
-plt.title('Efectividad de las recomendaciones según el género del usuario')
-plt.show()
+    st.error("❌ Las columnas 'Gender' o 'Satisfaction_score' no están presentes en el DataFrame.
 
 # Gráfico de dispersión entre 'Age' y 'Satisfaction_score' con color por 'Gender'
 plt.figure(figsize=(8, 6))
