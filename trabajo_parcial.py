@@ -19,8 +19,8 @@ import seaborn as sns
 
 st.set_page_config(page_title="Mi Proyecto desde Colab", layout="centered")
 
-st.title("🚀 Mi Proyecto desde Colab")
-st.header("2.1 - Etapa de combinación de datos")
+st.title("Predicción de la Satisfacción del Usuario en Netflix mediante Machine Learning")
+st.header("Etapa de combinación de datos")
 
 st.write("""
 En esta etapa combinaremos los DataFrames en uno solo con el propósito de facilitar la limpieza de datos y realizar un análisis preciso.
