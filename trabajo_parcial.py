@@ -467,7 +467,7 @@ plt.show()
 
 st.header("4: ¿Cómo influye el género en la satisfacción del usuario?")
 
-if 'Gender' in df.columns and 'Satisfaction_score' in df.columns:
+if 'Gender' in df_netflix.columns and 'Satisfaction_score' in df_netflix.columns:
     df_temp = df[['Gender', 'Satisfaction_score']].copy()
 
     # Limpieza: eliminar filas con valores nulos
