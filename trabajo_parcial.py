@@ -402,8 +402,6 @@ print(df_clean_netflix.isnull().sum())
 
 df_clean_netflix.head()
 
-"""## 2.3- EDA"""
-
 
 
 # Seleccionar columnas numéricas del DataFrame
