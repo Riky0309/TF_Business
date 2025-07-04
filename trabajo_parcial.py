@@ -205,19 +205,13 @@ if 'df_netflix' in locals() or 'df_netflix' in globals():
     st.markdown("### 📊 Porcentaje de nulos por columna (actualizado)")
     st.dataframe(df_cat.isnull().sum() * 100 / len(df_cat))
 
-    # 6️⃣ Imputación con valor definido (análisis previo de la variable 'Pais')
-    if 'Pais' in df_cat.columns:
-        st.markdown("### 🏳️ Variable 'Pais': Distribución de valores")
-
-        st.write(df_cat['Pais'].value_counts(dropna=False))
+   if 'Pais' in df_cat.columns:
+        st.subheader("Distribución de la variable 'Pais'")
+        st.dataframe(df_cat['Pais'].value_counts(dropna=False))
         st.write(f"Total de nulos en 'Pais': {df_cat['Pais'].isnull().sum()}")
-        st.write(f"Total de filas con datos: {df_cat['Pais'].count()}")
+        st.write(f"Total de filas con datos en 'Pais': {df_cat['Pais'].count()}")
     else:
-        st.warning("⚠️ La columna 'Pais' no existe en df_cat")
-
-    # 7️⃣ Cantidad de nulos por columna en todo el dataset original
-    st.markdown("### 📦 Nulos en el DataFrame completo (`df_netflix`)")
-    st.dataframe(df_netflix.isnull().sum())
+        st.warning("La columna 'Pais' no existe en df_cat.")
 
 """GRAFICA GENERO Y TIPO
 
