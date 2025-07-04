@@ -11,31 +11,41 @@ Original file is located at
 #2 Carga de Librerias del proyecto
 """
 
-# Commented out IPython magic to ensure Python compatibility.
-# Importar paquetes
+import streamlit as st
 import pandas as pd
 import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
-# %matplotlib inline
+import seaborn as sns
 
-#Automcompletar rápido
-# %config IPCompleter.greedy=True
-#Desactivar la notación científica
-pd.options.display.float_format = '{:.2f}'.format
+st.set_page_config(page_title="Mi Proyecto desde Colab", layout="centered")
 
-#GoogleDrive
-from google.colab import drive
-drive.mount('/content/drive')
+st.title("🚀 Mi Proyecto desde Colab")
+st.header("2.1 - Etapa de combinación de datos")
 
-from google.colab import drive
-drive.mount('/content/drive')
-
-"""## 2.1- Etapa de combinación de datos
+st.write("""
 En esta etapa combinaremos los DataFrames en uno solo con el propósito de facilitar la limpieza de datos y realizar un análisis preciso.
-"""
+""")
 
-df_netflix=pd.read_excel("/content/drive/MyDrive/Bussiness/Trabajo_Parcial_BPA.xlsx")   # cargada de datos
+# Subir archivo Excel
+archivo = st.file_uploader("Sube el archivo Excel (.xlsx) con los datos", type=["xlsx"])
+
+if archivo is not None:
+    df_netflix = pd.read_excel(archivo)
+
+    st.subheader("🔍 Vista previa de los datos")
+    st.write("**Primeras 5 filas:**")
+    st.dataframe(df_netflix.head())
+
+    st.write("**Últimas 6 filas:**")
+    st.dataframe(df_netflix.tail(6))
+
+    st.subheader("📊 Estadísticas descriptivas")
+    st.dataframe(df_netflix.describe())
+
+    if st.checkbox("Mostrar nombres de columnas"):
+        st.write(df_netflix.columns.tolist())
+else:
+    st.warning("Por favor, sube un archivo .xlsx para comenzar.")
 
 """Muestra las 5 primeras filas"""
 
