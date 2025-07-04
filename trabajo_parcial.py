@@ -30,8 +30,6 @@ pd.options.display.float_format = '{:.2f}'.format
 En esta etapa combinaremos los DataFrames en uno solo con el propósito de facilitar la limpieza de datos y realizar un análisis preciso.
 """
 
-df_netflix=pd.read_excel("/content/drive/MyDrive/Bussiness/Trabajo_Parcial_BPA.xlsx")   # cargada de datos
-
 """Muestra las 5 primeras filas"""
 
 df_netflix.head(5)
