@@ -26,10 +26,6 @@ st.title("Mi Proyecto desde Colab 🚀")
 pd.options.display.float_format = '{:.2f}'.format
 
 
-
-from google.colab import drive
-drive.mount('/content/drive')
-
 """## 2.1- Etapa de combinación de datos
 En esta etapa combinaremos los DataFrames en uno solo con el propósito de facilitar la limpieza de datos y realizar un análisis preciso.
 """
