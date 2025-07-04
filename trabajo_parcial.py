@@ -25,9 +25,7 @@ st.title("Mi Proyecto desde Colab 🚀")
 #Desactivar la notación científica
 pd.options.display.float_format = '{:.2f}'.format
 
-#GoogleDrive
-from google.colab import drive
-drive.mount('/content/drive')
+
 
 from google.colab import drive
 drive.mount('/content/drive')
