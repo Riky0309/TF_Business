@@ -17,7 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.set_page_config(page_title="Mi Proyecto desde Colab", layout="centered")
+st.set_page_config(page_title="NETFLIX BPA", layout="centered")
 
 st.title("Predicción de la Satisfacción del Usuario en Netflix mediante Machine Learning")
 st.header("Etapa de combinación de datos")
