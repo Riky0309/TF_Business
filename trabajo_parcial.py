@@ -465,7 +465,7 @@ plt.title('Frecuencia de consumo y satisfacción del usuario')
 plt.show()
 
 
-st.header("4: ¿Cómo influye el género en la satisfacción del usuario?")
+"""4. ¿Cómo influye el género en la satisfacción del usuario?"""
 
 if 'Gender' in df_netflix.columns and 'Satisfaction_score' in df_netflix.columns:
     df_temp = df[['Gender', 'Satisfaction_score']].copy()
