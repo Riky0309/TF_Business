@@ -119,9 +119,18 @@ df_netflix.shape
 
 df_netflix.duplicated().sum()
 
-"""Identificar ñas filas duplicadas"""
+"""Identificar Las filas duplicadas"""
 
-df_netflix[df_netflix.duplicated()]
+duplicados = df_netflix[df_netflix.duplicated()]
+st.write(f"🔁 Número de filas duplicadas: {duplicados.shape[0]}")
+
+if st.checkbox("Mostrar duplicados"):
+    try:
+        st.dataframe(duplicados.select_dtypes(include=["number", "object", "bool"]))
+    except Exception as e:
+        st.error("⚠️ No se pudieron mostrar los duplicados por el siguiente error:")
+        st.text(str(e))
+#df_netflix[df_netflix.duplicated()]
 
 """Eliminar las filas duplicatas"""
 
