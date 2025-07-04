@@ -171,34 +171,53 @@ print(df_netflix.shape)
 Extraer las variables categoricas o no numericas
 """
 
-df_cat=df_netflix.select_dtypes(exclude='number').copy()
+st.subheader("📊 2.2.6 - Análisis de columnas categóricas (`df_cat`)")
 
-df_cat
+if 'df_netflix' in locals() or 'df_netflix' in globals():
+    # 1️⃣ Extraer columnas no numéricas
+    df_cat = df_netflix.select_dtypes(exclude='number').copy()
 
-"""ver la cantidad de nulos existentes por cada columna (isnul())"""
+    try:
+        st.write("🔍 Vista previa de las columnas categóricas:")
+        st.dataframe(df_cat.select_dtypes(include=["object", "bool"]))
+    except Exception as e:
+        st.error("❌ Error al mostrar df_cat:")
+        st.text(str(e))
 
-df_cat.isnull().sum().sort_values(ascending=False)
+    # 2️⃣ Cantidad de valores nulos por columna
+    st.markdown("### 📉 Cantidad de nulos por columna")
+    nulos_totales = df_cat.isnull().sum().sort_values(ascending=False)
+    st.dataframe(nulos_totales)
 
-"""Cuanto es en porcentaje la cantidad de nulos por cada columna"""
+    # 3️⃣ Porcentaje de nulos por columna
+    st.markdown("### 📊 Porcentaje de nulos por columna")
+    nulos_porcentaje = df_cat.isnull().sum().sort_values(ascending=False) * 100 / len(df_cat)
+    st.dataframe(nulos_porcentaje)
 
-df_cat.isnull().sum().sort_values(ascending=False)*100/len(df_cat)
+    # 4️⃣ Eliminar columna con muchos nulos: 'Languages'
+    if 'Languages' in df_cat.columns:
+        df_cat.drop(columns='Languages', inplace=True)
+        st.success("✅ Columna 'Languages' eliminada por tener muchos valores nulos.")
+    else:
+        st.info("ℹ️ La columna 'Languages' ya fue eliminada o no existe.")
 
-"""Eliminar la variable si la cantidad filas es excesiva con nulos"""
+    # 5️⃣ Nuevos porcentajes de nulos tras eliminación
+    st.markdown("### 📊 Porcentaje de nulos por columna (actualizado)")
+    st.dataframe(df_cat.isnull().sum() * 100 / len(df_cat))
 
-#CAMBIO PAIS POR Languages
+    # 6️⃣ Imputación con valor definido (análisis previo de la variable 'Pais')
+    if 'Pais' in df_cat.columns:
+        st.markdown("### 🏳️ Variable 'Pais': Distribución de valores")
 
-df_cat.drop(columns ='Languages', inplace=True)
-df_cat.isnull().sum().sort_values(ascending=False)*100/len(df_cat)
+        st.write(df_cat['Pais'].value_counts(dropna=False))
+        st.write(f"Total de nulos en 'Pais': {df_cat['Pais'].isnull().sum()}")
+        st.write(f"Total de filas con datos: {df_cat['Pais'].count()}")
+    else:
+        st.warning("⚠️ La columna 'Pais' no existe en df_cat")
 
-"""Imputacion con avalor definido"""
-
-print('Variable "Pais"\n')
-print(df_cat['Pais'].value_counts())   #cambie por pais porque languages ya fue elimnada
-print('\ntotal de nulos', df_cat ['Pais'].isnull().sum())
-print('total de filas',df_cat['Pais'].count())
-
-print('Cantidad de datos nulos por columna:')
-print(df_netflix.isnull().sum())
+    # 7️⃣ Cantidad de nulos por columna en todo el dataset original
+    st.markdown("### 📦 Nulos en el DataFrame completo (`df_netflix`)")
+    st.dataframe(df_netflix.isnull().sum())
 
 """GRAFICA GENERO Y TIPO
 
