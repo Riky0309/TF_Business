@@ -32,7 +32,6 @@ En esta etapa combinaremos los DataFrames en uno solo con el propósito de facil
 
 """Muestra las 5 primeras filas"""
 
-df_netflix.head(5)
 
 """Muestre las 6 ultimas filas"""
 
