@@ -79,57 +79,56 @@ if uploaded_file is not None:
     else:
         st.warning("❗ Faltan columnas 'Edad' o 'Satisfaction_score'")
 
-st.markdown("## 📈 4. Modelización del Nivel de Satisfacción")
-st.markdown("A continuación se entrena un modelo **Random Forest** para predecir el nivel de satisfacción del usuario en función de su edad, frecuencia de uso y duración de contenido.")
+    # Modelado
+    st.markdown("## 📈 4. Modelización del Nivel de Satisfacción")
+    st.markdown("A continuación se entrena un modelo **Random Forest** para predecir el nivel de satisfacción del usuario en función de su edad, frecuencia de uso y duración de contenido.")
 
-cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
-if all(col in df.columns for col in cols_modelo):
-    with st.spinner("🔄 Procesando datos y entrenando el modelo..."):
-        df_model = df[cols_modelo].dropna()
-        df_model['Freq'] = df_model['Freq'].astype('category').cat.codes
-        df_model['Satisfaction_score'] = pd.cut(df_model['Satisfaction_score'],
-                                                bins=[0, 5, 8, 10],
-                                                labels=['Baja', 'Media', 'Alta'])
+    cols_modelo = ['Age', 'Freq', 'duration (min)', 'Satisfaction_score']
+    if all(col in df.columns for col in cols_modelo):
+        with st.spinner("🔄 Procesando datos y entrenando el modelo..."):
+            df_model = df[cols_modelo].dropna()
+            df_model['Freq'] = df_model['Freq'].astype('category').cat.codes
+            df_model['Satisfaction_score'] = pd.cut(df_model['Satisfaction_score'],
+                                                    bins=[0, 5, 8, 10],
+                                                    labels=['Baja', 'Media', 'Alta'])
 
-        X = df_model.drop('Satisfaction_score', axis=1)
-        y = df_model['Satisfaction_score']
+            X = df_model.drop('Satisfaction_score', axis=1)
+            y = df_model['Satisfaction_score']
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-        modelo = RandomForestClassifier(n_estimators=100, random_state=42)
-        modelo.fit(X_train, y_train)
-        y_pred = modelo.predict(X_test)
+            modelo = RandomForestClassifier(n_estimators=100, random_state=42)
+            modelo.fit(X_train, y_train)
+            y_pred = modelo.predict(X_test)
 
-    st.success("✅ Modelo entrenado correctamente.")
+        st.success("✅ Modelo entrenado correctamente.")
 
-    st.markdown("### 🎯 Resultados del Modelo")
+        st.markdown("### 🎯 Resultados del Modelo")
 
-    col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2)
 
-    with col1:
-        st.metric("📊 Accuracy", f"{accuracy_score(y_test, y_pred)*100:.2f}%")
+        with col1:
+            st.metric("📊 Accuracy", f"{accuracy_score(y_test, y_pred)*100:.2f}%")
 
-    with col2:
-        feature_importance = modelo.feature_importances_
-        importance_df = pd.DataFrame({'Variable': X.columns, 'Importancia': feature_importance})
-        fig, ax = plt.subplots()
-        sns.barplot(x='Importancia', y='Variable', data=importance_df.sort_values(by="Importancia", ascending=True), ax=ax)
-        ax.set_title("📌 Importancia de las variables")
-        st.pyplot(fig)
+        with col2:
+            feature_importance = modelo.feature_importances_
+            importance_df = pd.DataFrame({'Variable': X.columns, 'Importancia': feature_importance})
+            fig, ax = plt.subplots()
+            sns.barplot(x='Importancia', y='Variable', data=importance_df.sort_values(by="Importancia", ascending=True), ax=ax)
+            ax.set_title("📌 Importancia de las variables")
+            st.pyplot(fig)
 
-    st.markdown("### 📋 Matriz de Confusión")
-    st.dataframe(pd.DataFrame(confusion_matrix(y_test, y_pred),
-                              columns=['Pred Baja', 'Pred Media', 'Pred Alta'],
-                              index=['Real Baja', 'Real Media', 'Real Alta']))
+        st.markdown("### 📋 Matriz de Confusión")
+        st.dataframe(pd.DataFrame(confusion_matrix(y_test, y_pred),
+                                  columns=['Pred Baja', 'Pred Media', 'Pred Alta'],
+                                  index=['Real Baja', 'Real Media', 'Real Alta']))
 
-    st.markdown("### 📄 Reporte de Clasificación")
-    st.code(classification_report(y_test, y_pred), language='text')
+        st.markdown("### 📄 Reporte de Clasificación")
+        st.code(classification_report(y_test, y_pred), language='text')
 
-else:
-    st.error("🚫 No se encontraron todas las columnas necesarias para el modelo:")
-    st.write("Se requieren:", cols_modelo)
+    else:
+        st.error("🚫 No se encontraron todas las columnas necesarias para el modelo:")
+        st.write("Se requieren:", cols_modelo)
+
 else:
     st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
-
-
-
