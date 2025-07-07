@@ -27,6 +27,7 @@ if uploaded_file is not None:
     }
 
     df_netflix.rename(columns=columnas_renombrar, inplace=True)
+    st.dataframe(df_netflix.head())
 
     # 2.2 Corrección de tipos de datos
     columnas_castear = {
@@ -36,41 +37,53 @@ if uploaded_file is not None:
         'Pais': 'category'
     }
     df_netflix = df_netflix.astype(columnas_castear)
+    st.dataframe(df_netflix.dtypes)
+    
 
     # 2.3 Eliminación de columnas irrelevantes
     columnas_a_eliminar = [
         'director', 'show_id', 'cast', 'description',
         'Rational', 'date_added_month', 'date_added_day'
     ]
-
     df_netflix.drop(columns=columnas_a_eliminar, inplace=True, errors='ignore')
-
+    st.dataframe(df_netflix.head())
+    
     # 2.4 Eliminación de duplicados
     df_netflix.drop_duplicates(inplace=True)
-
+    st.write("Filas después de eliminar duplicados:", df_netflix.shape[0])
+    
+    
     # 2.5 Filtrado de filas con demasiados nulos
     # Se conservan solo las filas que tienen al menos 9 valores no nulos
     df_netflix.dropna(thresh=9, inplace=True)
+    st.write("Filas después del filtrado por nulos:", df_netflix.shape[0])
 
     # 2.6 Tratamiento de datos faltantes (missing data)
+    st.subheader("🩹 2.6 Tratamiento de Datos Faltantes")
 
     # Eliminar columna 'Languages' si existe, por alta cantidad de nulos
     if 'Languages' in df_netflix.columns:
         df_netflix.drop(columns='Languages', inplace=True)
+        st.write("✅ Columna 'Languages' eliminada por exceso de nulos.")
 
     # Imputación de columnas categóricas con moda
     columnas_moda = ['Genero', 'Pais']
     for col in columnas_moda:
         if df_netflix[col].isnull().sum() > 0:
             df_netflix[col].fillna(df_netflix[col].mode()[0], inplace=True)
-
+            st.write(f"✅ Imputación por moda aplicada en '{col}'")
+            
     # Imputación de columnas numéricas con la mediana
     columnas_numericas = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
     for col in columnas_numericas:
         if col in df_netflix.columns:
             df_netflix[col] = pd.to_numeric(df_netflix[col], errors='coerce')
             df_netflix[col].fillna(df_netflix[col].median(), inplace=True)
+            st.write(f"✅ Imputación por mediana aplicada en '{col}'")
 
+    # Mostrar tabla final tras preprocesamiento
+    st.subheader("📋 Vista Previa Final del Dataset Limpio")
+    st.dataframe(df_netflix.head())
     
     
     def plot_outliers(df, column_name):
