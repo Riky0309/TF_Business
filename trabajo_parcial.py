@@ -23,6 +23,13 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.success("✅ Archivo cargado correctamente")
 
+    file_path = "/mnt/data/Trabajo_Parcial_BPA (1).xlsx"
+    df = pd.read_excel(file_path)
+
+    # Mostrar las primeras filas
+    df_head = df.head(10)
+    df_head
+
     # ------------------------------
     # 2.1 🧩 Combinación de Datos
     # ------------------------------
