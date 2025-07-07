@@ -47,16 +47,18 @@ if uploaded_file is not None:
     # 2.2 🛠️ Corrección de Tipos de Datos
     # ------------------------------
     df_netflix['Titulo'] = df_netflix['Titulo'].astype(str)
-    columnas_castear = {
-        'Genero': 'category',
-        'Titulo': 'category',
-        'Edad': 'category',
-        'Pais': 'category'
-    }
-    for col, tipo in columnas_castear.items():
+    df_netflix['Titulo'] = df_netflix['Titulo'].astype(str)
+
+columnas_castear = {
+    'Genero': 'category',
+    'Titulo': 'category',
+    'Edad': 'category',
+    'Pais': 'category'
+}
+
+for col, tipo in columnas_castear.items():
     if col in df_netflix.columns:
         try:
-            # Convierte a string primero si es tipo category
             if tipo == 'category':
                 df_netflix[col] = df_netflix[col].astype(str).astype(tipo)
             else:
