@@ -3,6 +3,9 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 st.set_page_config(page_title="Netflix Satisfaction Insights", layout="wide")
 
@@ -62,14 +65,13 @@ if uploaded_file is not None:
     else:
         st.warning("❗ Faltan columnas 'Genero' o 'Satisfaction_score'")
 
-# Insight 5
+    # Insight 5
     if "Edad" in df.columns and "Satisfaction_score" in df.columns:
         st.subheader("5️⃣ Influencia de la edad en la satisfacción del usuario")
         df_clean = df.dropna(subset=["Edad", "Satisfaction_score"]).copy()
         df_clean["Edad"] = pd.to_numeric(df_clean["Edad"], errors="coerce")
         df_clean["Satisfaction_score"] = pd.to_numeric(df_clean["Satisfaction_score"], errors="coerce")
         df_clean = df_clean.dropna(subset=["Edad", "Satisfaction_score"])
-
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.scatterplot(x="Edad", y="Satisfaction_score", data=df_clean, ax=ax)
         ax.set_title("Relación entre Edad y Nivel de Satisfacción")
@@ -77,49 +79,36 @@ if uploaded_file is not None:
     else:
         st.warning("❗ Faltan columnas 'Edad' o 'Satisfaction_score'")
 
-
- from sklearn.model_selection import train_test_split
- from sklearn.ensemble import RandomForestClassifier
- from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-
+    # Modelización
     st.header("📈 4. Modelización")
-
     cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
     if all(col in df.columns for col in cols_modelo):
         df_model = df[cols_modelo].dropna()
-
-        # Conversión de variables categóricas
         df_model['Freq'] = df_model['Freq'].astype('category').cat.codes
         df_model['Satisfaction_score'] = pd.cut(df_model['Satisfaction_score'],
                                                 bins=[0, 5, 8, 10],
                                                 labels=['Baja', 'Media', 'Alta'])
 
-        # Separación de variables
         X = df_model.drop('Satisfaction_score', axis=1)
         y = df_model['Satisfaction_score']
 
-        # División en entrenamiento y prueba
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-        # Entrenamiento del modelo
         modelo = RandomForestClassifier(n_estimators=100, random_state=42)
         modelo.fit(X_train, y_train)
         y_pred = modelo.predict(X_test)
 
-        # Resultados
         st.subheader("🔍 Resultados del modelo Random Forest")
         st.write("**Accuracy:**", round(accuracy_score(y_test, y_pred), 2))
-
         st.text("Matriz de Confusión:")
         st.write(confusion_matrix(y_test, y_pred))
-
         st.text("Reporte de Clasificación:")
         st.text(classification_report(y_test, y_pred))
     else:
         st.warning("⚠️ Faltan columnas necesarias para el modelo: " + ', '.join(cols_modelo))
 
-# ✅ Este else está al mismo nivel que el if uploaded_file is not None:
 else:
     st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
+
 
 
