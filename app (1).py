@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 st.set_page_config(page_title="Netflix Satisfaction Insights", layout="wide")
@@ -119,7 +120,7 @@ if uploaded_file is not None:
             st.pyplot(fig)
 
 
-       from sklearn.utils.multiclass import unique_labels
+    
 
 st.markdown("### 📋 Matriz de Confusión")
 
