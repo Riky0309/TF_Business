@@ -70,7 +70,7 @@ for col, tipo in columnas_castear.items():
     # ------------------------------
     # 2.3 🧹 Eliminación de Columnas Irrelevantes
     # ------------------------------
-    st.subheader("🧹 2.3 Eliminación de Columnas Irrelevantes")
+    st.subheader("🧹 Eliminación de Columnas Irrelevantes")
     columnas_a_eliminar = [
         'director', 'show_id', 'cast', 'description',
         'Rational', 'date_added_month', 'date_added_day'
@@ -81,21 +81,21 @@ for col, tipo in columnas_castear.items():
     # ------------------------------
     # 2.4 🔁 Eliminación de Duplicados
     # ------------------------------
-    st.subheader("🔁 2.4 Eliminación de Duplicados")
+    st.subheader("🔁 Eliminación de Duplicados")
     df_netflix.drop_duplicates(inplace=True)
     st.dataframe(df_netflix.head(10), use_container_width=True)
 
     # ------------------------------
     # 2.5 🧯 Filtrado de Filas con Muchos Nulos
     # ------------------------------
-    st.subheader("🧯 2.5 Filtrado de Filas con Muchos Nulos")
+    st.subheader("🧯 Filtrado de Filas con Muchos Nulos")
     df_netflix.dropna(thresh=9, inplace=True)
     st.dataframe(df_netflix.head(10), use_container_width=True)
 
     # ------------------------------
     # 2.6 🩺 Manejo de Datos Faltantes (Missing Data)
     # ------------------------------
-    st.subheader("🩺 2.6 Missing Data: ")
+    st.subheader("🩺 Missing Data: ")
 
     if 'Languages' in df_netflix.columns:
         df_netflix.drop(columns='Languages', inplace=True)
