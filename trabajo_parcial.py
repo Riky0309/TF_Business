@@ -23,12 +23,16 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.success("✅ Archivo cargado correctamente")
 
-    file_path = "/mnt/data/Trabajo_Parcial_BPA (1).xlsx"
-    df = pd.read_excel(file_path)
+    # ------------------------------
+    # 1️⃣ Vista Previa de los Datos Originales
+    # ------------------------------
+    st.subheader("📊 Vista Previa de los Datos Iniciales")
+    st.markdown("A continuación se muestran las primeras 10 filas del archivo subido:")
 
-    # Mostrar las primeras filas
-    df_head = df.head(10)
-    df_head
+    st.dataframe(df.head(10), use_container_width=True)
+
+    except Exception as e:
+        st.error(f"❌ Error al cargar o mostrar el archivo: {e}")
 
     # ------------------------------
     # 2.1 🧩 Combinación de Datos
