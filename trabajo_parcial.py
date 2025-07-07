@@ -17,6 +17,8 @@ uploaded_file = st.file_uploader("\U0001F4C1 Sube tu archivo de Excel (xlsx)", t
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.success("✅ Archivo cargado correctamente")
+    # Crear copia de trabajo
+    df_netflix = df.copy()
 
     # 2.1 Combinación de Datos
     columnas_renombrar= {
