@@ -55,7 +55,10 @@ if uploaded_file is not None:
     }
     for col, tipo in columnas_castear.items():
         if col in df_netflix.columns:
-            df_netflix[col] = df_netflix[col].astype(tipo)
+            try:
+                df_netflix[col] = df_netflix[col].astype(tipo)
+            except Exception as e:
+                st.warning(f"⚠️ No se pudo convertir la columna '{col}' a tipo {tipo}: {e}")
 
     # ------------------------------
     # 2.3 🧹 Eliminación de Columnas Irrelevantes
