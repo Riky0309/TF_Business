@@ -1,12 +1,11 @@
-
 import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.utils.multiclass import unique_labels  # ✅ Importación necesaria
 
 st.set_page_config(page_title="Netflix Satisfaction Insights", layout="wide")
 
@@ -78,13 +77,13 @@ if uploaded_file is not None:
         ax.set_title("Relación entre Edad y Nivel de Satisfacción")
         st.pyplot(fig)
     else:
-        st.warning("❗ Faltan columnas 'Edad' o 'Satisfaction_score'")
+        st.warning("❗ Faltan columnas 'Age' o 'Satisfaction_score'")
 
     # Modelado
     st.markdown("## 📈 4. Modelización del Nivel de Satisfacción")
     st.markdown("A continuación se entrena un modelo **Random Forest** para predecir el nivel de satisfacción del usuario en función de su edad, frecuencia de uso y duración de contenido.")
 
-    cols_modelo = ['Age', 'Freq', 'duration (min)', 'Satisfaction_score']
+    cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
     if all(col in df.columns for col in cols_modelo):
         with st.spinner("🔄 Procesando datos y entrenando el modelo..."):
             df_model = df[cols_modelo].dropna()
@@ -119,21 +118,18 @@ if uploaded_file is not None:
             ax.set_title("📌 Importancia de las variables")
             st.pyplot(fig)
 
+        st.markdown("### 📋 Matriz de Confusión")
 
-    
+        labels = unique_labels(y_test, y_pred)
+        cm = confusion_matrix(y_test, y_pred, labels=labels)
 
-st.markdown("### 📋 Matriz de Confusión")
+        cm_df = pd.DataFrame(
+            cm,
+            index=[f'Real {label}' for label in labels],
+            columns=[f'Pred {label}' for label in labels]
+        )
 
-labels = unique_labels(y_test, y_pred)
-cm = confusion_matrix(y_test, y_pred, labels=labels)
-
-cm_df = pd.DataFrame(
-    cm,
-    index=[f'Real {label}' for label in labels],
-    columns=[f'Pred {label}' for label in labels]
-)
-
-st.dataframe(cm_df)
+        st.dataframe(cm_df)
 
         st.markdown("### 📄 Reporte de Clasificación")
         st.code(classification_report(y_test, y_pred), language='text')
