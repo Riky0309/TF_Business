@@ -37,6 +37,7 @@ if uploaded_file is not None:
     df_netflix['Titulo'] = df_netflix['Titulo'].astype(str)
     columnas_castear = {
         'Genero': 'category',
+        'Titulo': 'category',
         'Edad': 'category',
         'Pais': 'category'
     }
