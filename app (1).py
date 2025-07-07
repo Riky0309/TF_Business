@@ -62,7 +62,20 @@ if uploaded_file is not None:
     else:
         st.warning("❗ Faltan columnas 'Genero' o 'Satisfaction_score'")
 
+# Insight 5
+    if "Edad" in df.columns and "Satisfaction_score" in df.columns:
+        st.subheader("5️⃣ Influencia de la edad en la satisfacción del usuario")
+        df_clean = df.dropna(subset=["Edad", "Satisfaction_score"]).copy()
+        df_clean["Edad"] = pd.to_numeric(df_clean["Edad"], errors="coerce")
+        df_clean["Satisfaction_score"] = pd.to_numeric(df_clean["Satisfaction_score"], errors="coerce")
+        df_clean = df_clean.dropna(subset=["Edad", "Satisfaction_score"])
 
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.scatterplot(x="Edad", y="Satisfaction_score", data=df_clean, ax=ax)
+        ax.set_title("Relación entre Edad y Nivel de Satisfacción")
+        st.pyplot(fig)
+    else:
+        st.warning("❗ Faltan columnas 'Edad' o 'Satisfaction_score'")
 else:
     st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
 
