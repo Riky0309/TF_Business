@@ -117,7 +117,7 @@ if all(col in df_netflix.columns for col in cols_modelo):
     st.text("Reporte de Clasificación:")
     st.text(classification_report(y_test, y_pred))
 
-    else:
+else:
     st.warning("⚠️ Faltan columnas necesarias para el modelo: " + ', '.join(cols_modelo))
 else:
     st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
