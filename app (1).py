@@ -62,11 +62,6 @@ if uploaded_file is not None:
     else:
         st.warning("❗ Faltan columnas 'Genero' o 'Satisfaction_score'")
 
-else:
-    st.info("🔄 Esperando que subas un archivo .xlsx válido.")
-
-
-
 
 st.header("5️⃣ Insight: ¿Influencia de la edad en la satisfacción?")
 
@@ -82,5 +77,15 @@ if 'Edad' in df_netflix.columns and 'Satisfaction_score' in df_netflix.columns:
     st.pyplot(fig)
 else:
     st.warning("❗ Las columnas 'Edad' o 'Satisfaction_score' no están disponibles.")
+
+
+
+else:
+    st.info("🔄 Esperando que subas un archivo .xlsx válido.")
+
+
+
+
+
 
 
