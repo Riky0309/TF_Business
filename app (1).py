@@ -118,10 +118,21 @@ if uploaded_file is not None:
             ax.set_title("📌 Importancia de las variables")
             st.pyplot(fig)
 
-        st.markdown("### 📋 Matriz de Confusión")
-        st.dataframe(pd.DataFrame(confusion_matrix(y_test, y_pred),
-                                  columns=['Pred Baja', 'Pred Media', 'Pred Alta'],
-                                  index=['Real Baja', 'Real Media', 'Real Alta']))
+
+       from sklearn.utils.multiclass import unique_labels
+
+st.markdown("### 📋 Matriz de Confusión")
+
+labels = unique_labels(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred, labels=labels)
+
+cm_df = pd.DataFrame(
+    cm,
+    index=[f'Real {label}' for label in labels],
+    columns=[f'Pred {label}' for label in labels]
+)
+
+st.dataframe(cm_df)
 
         st.markdown("### 📄 Reporte de Clasificación")
         st.code(classification_report(y_test, y_pred), language='text')
