@@ -19,7 +19,7 @@ if uploaded_file is not None:
     st.success("✅ Archivo cargado correctamente")
 
     # 2.1 Combinación de Datos
-    = {
+    ={
         'Gender': 'Genero',
         'Age': 'Edad',
         'title': 'Titulo',
