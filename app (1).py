@@ -81,7 +81,7 @@ else:
 
 
 else:
-    st.info("🔄 Esperando que subas un archivo .xlsx válido.")
+    st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
 
 
 
