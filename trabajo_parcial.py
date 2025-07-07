@@ -31,8 +31,8 @@ if uploaded_file is not None:
 
     st.dataframe(df.head(10), use_container_width=True)
 
-    except Exception as e:
-        st.error(f"❌ Error al cargar o mostrar el archivo: {e}")
+except Exception as e:
+    st.error(f"❌ Error al cargar o mostrar el archivo: {e}")
 
     # ------------------------------
     # 2.1 🧩 Combinación de Datos
