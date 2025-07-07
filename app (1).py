@@ -86,7 +86,7 @@ st.header("📈 4. Modelización")
 
 # Verifica que estén todas las columnas necesarias
 cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
-if all(col in df_netflix.columns for col in cols_modelo):
+    if all(col in df_netflix.columns for col in cols_modelo):
     df_model = df_netflix[cols_modelo].dropna()
 
     # Conversión de variables categóricas
@@ -117,7 +117,7 @@ if all(col in df_netflix.columns for col in cols_modelo):
     st.text("Reporte de Clasificación:")
     st.text(classification_report(y_test, y_pred))
 
-else:
+    else:
     st.warning("⚠️ Faltan columnas necesarias para el modelo: " + ', '.join(cols_modelo))
 else:
     st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
