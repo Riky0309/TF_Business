@@ -82,49 +82,46 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-st.header("📈 4. Modelización")
+    # Capítulo 4 - Modelización
+    st.header("📈 4. Modelización")
 
-# Verifica que estén todas las columnas necesarias
-cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
-if all(col in df_netflix.columns for col in cols_modelo):
-    df_model = df_netflix[cols_modelo].dropna()
+    cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
+    if all(col in df.columns for col in cols_modelo):
+        df_model = df[cols_modelo].dropna()
 
-    # Conversión de variables categóricas
-    df_model['Freq'] = df_model['Freq'].astype('category').cat.codes
-    df_model['Satisfaction_score'] = pd.cut(df_model['Satisfaction_score'],
-                                            bins=[0, 5, 8, 10],
-                                            labels=['Baja', 'Media', 'Alta'])
+        # Conversión de variables categóricas
+        df_model['Freq'] = df_model['Freq'].astype('category').cat.codes
+        df_model['Satisfaction_score'] = pd.cut(df_model['Satisfaction_score'],
+                                                bins=[0, 5, 8, 10],
+                                                labels=['Baja', 'Media', 'Alta'])
 
-    # Separación de variables
-    X = df_model.drop('Satisfaction_score', axis=1)
-    y = df_model['Satisfaction_score']
+        # Separación de variables
+        X = df_model.drop('Satisfaction_score', axis=1)
+        y = df_model['Satisfaction_score']
 
-    # División en entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        # División en entrenamiento y prueba
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    # Entrenamiento del modelo
-    modelo = RandomForestClassifier(n_estimators=100, random_state=42)
-    modelo.fit(X_train, y_train)
-    y_pred = modelo.predict(X_test)
+        # Entrenamiento del modelo
+        modelo = RandomForestClassifier(n_estimators=100, random_state=42)
+        modelo.fit(X_train, y_train)
+        y_pred = modelo.predict(X_test)
 
-    # Resultados
-    st.subheader("🔍 Resultados del modelo Random Forest")
-    st.write("**Accuracy:**", round(accuracy_score(y_test, y_pred), 2))
+        # Resultados
+        st.subheader("🔍 Resultados del modelo Random Forest")
+        st.write("**Accuracy:**", round(accuracy_score(y_test, y_pred), 2))
 
-    st.text("Matriz de Confusión:")
-    st.write(confusion_matrix(y_test, y_pred))
+        st.text("Matriz de Confusión:")
+        st.write(confusion_matrix(y_test, y_pred))
 
-    st.text("Reporte de Clasificación:")
-    st.text(classification_report(y_test, y_pred))
+        st.text("Reporte de Clasificación:")
+        st.text(classification_report(y_test, y_pred))
+    else:
+        st.warning("⚠️ Faltan columnas necesarias para el modelo: " + ', '.join(cols_modelo))
 
-else:
-    st.warning("⚠️ Faltan columnas necesarias para el modelo: " + ', '.join(cols_modelo))
-
+# ✅ Este else cierra el if uploaded_file is not None:
 else:
     st.warning("🔄 Esperando que subas un archivo .xlsx válido.")
-
-
-
 
 
 
