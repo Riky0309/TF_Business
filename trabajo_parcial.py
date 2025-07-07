@@ -8,10 +8,15 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.utils.multiclass import unique_labels
 from sklearn.preprocessing import LabelEncoder
 
+# ------------------------------
+# Configuración de la Página
+# ------------------------------
 st.set_page_config(page_title="Netflix Satisfaction Insights", layout="wide")
 st.title("🎬 Análisis de Satisfacción de Usuarios de Netflix")
 
-# 📁 Subida de archivo
+# ------------------------------
+# 1. 📁 Carga de Archivo
+# ------------------------------
 uploaded_file = st.file_uploader("📂 Sube tu archivo de Excel (.xlsx)", type="xlsx")
 
 if uploaded_file is not None:
@@ -33,7 +38,6 @@ if uploaded_file is not None:
     # ------------------------------
     # 2.2 🛠️ Corrección de Tipos de Datos
     # ------------------------------
-
     df_netflix['Titulo'] = df_netflix['Titulo'].astype(str)
     columnas_castear = {
         'Genero': 'category',
@@ -81,7 +85,7 @@ if uploaded_file is not None:
             df_netflix[col].fillna(df_netflix[col].median(), inplace=True)
 
     # ------------------------------
-    # 👁️ Vista Previa de Datos Procesados
+    # 3. 👁️ Vista Previa y Análisis Exploratorio
     # ------------------------------
     try:
         st.subheader("👁️ Vista previa de los primeros datos procesados")
@@ -89,8 +93,7 @@ if uploaded_file is not None:
         st.dataframe(df_vista.head(10))
     except Exception as e:
         st.error(f"❌ Error al mostrar la tabla: {e}")
-    
-    
+
     def plot_outliers(df, column_name):
         plt.figure(figsize=(6, 4))
         sns.boxplot(y=df[column_name])
@@ -122,64 +125,62 @@ if uploaded_file is not None:
         plt.tight_layout()
     st.pyplot(plt)
 
-    st.header("\U0001F50D Insights")
+    # ------------------------------
+    # 4. 🔎 Insights de Satisfacción
+    # ------------------------------
+    st.header("🔎 Insights")
 
-    if "Genre_content" in df.columns and "Satisfaction_score" in df.columns:
-        st.subheader("1️⃣ Influencia del género en la satisfacción")
+    df_insight = df_netflix.copy()
+
+    if "Genre_content" in df_insight.columns and "Satisfaction_score" in df_insight.columns:
+        st.subheader("1️⃣ Influencia del género del contenido")
         fig, ax = plt.subplots(figsize=(10,6))
-        sns.boxplot(x='Genre_content', y='Satisfaction_score', data=df, ax=ax)
+        sns.boxplot(x='Genre_content', y='Satisfaction_score', data=df_insight, ax=ax)
         plt.xticks(rotation=90)
         st.pyplot(fig)
-    else:
-        st.warning("❗ Faltan columnas 'Genre_content' o 'Satisfaction_score'")
 
-    if "duration (min)" in df.columns and "Satisfaction_score" in df.columns:
-        st.subheader("2️⃣ Duración del contenido vs Satisfacción")
+    if "duration (min)" in df_insight.columns and "Satisfaction_score" in df_insight.columns:
+        st.subheader("2️⃣ Duración vs Satisfacción")
         fig, ax = plt.subplots(figsize=(10,6))
-        sns.scatterplot(x='duration (min)', y='Satisfaction_score', data=df, ax=ax)
+        sns.scatterplot(x='duration (min)', y='Satisfaction_score', data=df_insight, ax=ax)
         st.pyplot(fig)
-    else:
-        st.warning("❗ Faltan columnas 'duration (min)' o 'Satisfaction_score'")
 
-    if "Freq" in df.columns and "Satisfaction_score" in df.columns:
+    if "Freq" in df_insight.columns and "Satisfaction_score" in df_insight.columns:
         st.subheader("3️⃣ Frecuencia de uso y satisfacción")
         fig, ax = plt.subplots(figsize=(10,6))
-        sns.barplot(x='Freq', y='Satisfaction_score', data=df, ax=ax)
+        sns.barplot(x='Freq', y='Satisfaction_score', data=df_insight, ax=ax)
         plt.xticks(rotation=45)
         st.pyplot(fig)
-    else:
-        st.warning("❗ Faltan columnas 'Freq' o 'Satisfaction_score'")
 
-    if "Genero" in df.columns and "Satisfaction_score" in df.columns:
-        st.subheader("4️⃣ Satisfacción según el género del usuario")
-        df_clean = df.dropna(subset=["Genero", "Satisfaction_score"]).copy()
+    if "Genero" in df_insight.columns and "Satisfaction_score" in df_insight.columns:
+        st.subheader("4️⃣ Satisfacción por género de usuario")
+        df_clean = df_insight.dropna(subset=["Genero", "Satisfaction_score"]).copy()
         df_clean["Genero"] = df_clean["Genero"].astype(str)
         fig, ax = plt.subplots(figsize=(8,5))
         sns.boxplot(x='Genero', y='Satisfaction_score', data=df_clean, ax=ax)
         st.pyplot(fig)
-    else:
-        st.warning("❗ Faltan columnas 'Gender' o 'Satisfaction_score'")
 
-    if "Edad" in df.columns and "Satisfaction_score" in df.columns:
-        st.subheader("5️⃣ Influencia de la edad en la satisfacción del usuario")
-        df_clean = df.dropna(subset=["Edad", "Satisfaction_score"]).copy()
+    if "Edad" in df_insight.columns and "Satisfaction_score" in df_insight.columns:
+        st.subheader("5️⃣ Satisfacción por edad")
+        df_clean = df_insight.dropna(subset=["Edad", "Satisfaction_score"]).copy()
         df_clean["Edad"] = pd.to_numeric(df_clean["Edad"], errors="coerce")
         df_clean["Satisfaction_score"] = pd.to_numeric(df_clean["Satisfaction_score"], errors="coerce")
-        df_clean = df_clean.dropna(subset=["Edad", "Satisfaction_score"])
+        df_clean.dropna(subset=["Edad", "Satisfaction_score"], inplace=True)
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.scatterplot(x="Edad", y="Satisfaction_score", data=df_clean, ax=ax)
-        ax.set_title("Relación entre Edad y Nivel de Satisfacción")
+        ax.set_title("Relación entre Edad y Satisfacción")
         st.pyplot(fig)
-    else:
-        st.warning("❗ Faltan columnas 'Age' o 'Satisfaction_score'")
 
-    st.markdown("## \U0001F4C8 4. Modelización del Nivel de Satisfacción")
-    st.markdown("A continuación se entrena un modelo **Random Forest** para predecir el nivel de satisfacción del usuario en función de su edad, frecuencia de uso y duración de contenido.")
+    # ------------------------------
+    # 5. 🤖 Modelización con Random Forest
+    # ------------------------------
+    st.markdown("## 🤖 Modelización del Nivel de Satisfacción")
+    st.markdown("Se entrena un modelo **Random Forest** para predecir la satisfacción del usuario.")
 
     cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
-    if all(col in df.columns for col in cols_modelo):
-        with st.spinner("\U0001F504 Procesando datos y entrenando el modelo..."):
-            df_model = df[cols_modelo].dropna()
+    if all(col in df_insight.columns for col in cols_modelo):
+        with st.spinner("🧠 Entrenando el modelo..."):
+            df_model = df_insight[cols_modelo].dropna()
             df_model['Freq'] = df_model['Freq'].astype('category').cat.codes
             df_model['Satisfaction_score'] = pd.cut(df_model['Satisfaction_score'],
                                                     bins=[0, 5, 8, 10],
@@ -196,41 +197,37 @@ if uploaded_file is not None:
 
         st.success("✅ Modelo entrenado correctamente.")
 
-        st.markdown("### \U0001F3AF Resultados del Modelo")
-
+        st.markdown("### 🎯 Resultados del Modelo")
         col1, col2 = st.columns(2)
 
         with col1:
-            st.metric("\U0001F4CA Accuracy", f"{accuracy_score(y_test, y_pred)*100:.2f}%")
+            st.metric("📊 Accuracy", f"{accuracy_score(y_test, y_pred)*100:.2f}%")
 
         with col2:
             feature_importance = modelo.feature_importances_
             importance_df = pd.DataFrame({'Variable': X.columns, 'Importancia': feature_importance})
             fig, ax = plt.subplots()
             sns.barplot(x='Importancia', y='Variable', data=importance_df.sort_values(by="Importancia", ascending=True), ax=ax)
-            ax.set_title("\U0001F4CC Importancia de las variables")
+            ax.set_title("📌 Importancia de las Variables")
             st.pyplot(fig)
 
-        st.markdown("### \U0001F4CB Matriz de Confusión")
-
+        st.markdown("### 📊 Matriz de Confusión")
         labels = unique_labels(y_test, y_pred)
         cm = confusion_matrix(y_test, y_pred, labels=labels)
-
         cm_df = pd.DataFrame(
             cm,
             index=[f'Real {label}' for label in labels],
             columns=[f'Pred {label}' for label in labels]
         )
-
         st.dataframe(cm_df)
 
-        st.markdown("### \U0001F4C4 Reporte de Clasificación")
+        st.markdown("### 📋 Reporte de Clasificación")
         st.code(classification_report(y_test, y_pred), language='text')
 
     else:
-        st.error("\u274C No se encontraron todas las columnas necesarias para el modelo:")
-        st.write("Se requieren:", cols_modelo)
+        st.error("❌ No se encontraron todas las columnas necesarias para entrenar el modelo.")
+        st.write("Columnas requeridas:", cols_modelo)
 
 else:
-    st.warning("\U0001F504 Esperando que subas un archivo .xlsx válido.")
+    st.warning("📂 Esperando que subas un archivo .xlsx válido.")
 
