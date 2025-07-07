@@ -54,12 +54,17 @@ if uploaded_file is not None:
         'Pais': 'category'
     }
     for col, tipo in columnas_castear.items():
-        if col in df_netflix.columns:
-            try:
+    if col in df_netflix.columns:
+        try:
+            # Convierte a string primero si es tipo category
+            if tipo == 'category':
+                df_netflix[col] = df_netflix[col].astype(str).astype(tipo)
+            else:
                 df_netflix[col] = df_netflix[col].astype(tipo)
-            except Exception as e:
-                st.warning(f"⚠️ No se pudo convertir la columna '{col}' a tipo {tipo}: {e}")
+        except Exception as e:
+            st.warning(f"⚠️ No se pudo convertir la columna '{col}' a tipo {tipo}: {e}")
 
+    
     # ------------------------------
     # 2.3 🧹 Eliminación de Columnas Irrelevantes
     # ------------------------------
