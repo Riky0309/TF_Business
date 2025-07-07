@@ -9,83 +9,162 @@ from sklearn.utils.multiclass import unique_labels
 from sklearn.preprocessing import LabelEncoder
 
 st.set_page_config(page_title="Netflix Satisfaction Insights", layout="wide")
+st.title("🎬 Análisis de Satisfacción de Usuarios de Netflix")
 
-st.title("\U0001F3AC Análisis de Satisfacción de Usuarios de Netflix")
-
-uploaded_file = st.file_uploader("\U0001F4C1 Sube tu archivo de Excel (xlsx)", type="xlsx")
+# 📁 Subida de archivo
+uploaded_file = st.file_uploader("📂 Sube tu archivo de Excel (.xlsx)", type="xlsx")
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.success("✅ Archivo cargado correctamente")
-    # Crear copia de trabajo
-    df_netflix = df.copy()
 
-    # 2.1 Combinación de Datos
-    columnas_renombrar= {
+    # ------------------------------
+    # 2.1 🧩 Combinación de Datos
+    # ------------------------------
+    columnas_renombrar = {
         'Gender': 'Genero',
         'Age': 'Edad',
         'title': 'Titulo',
         'country': 'Pais'
     }
-
+    df_netflix = df.copy()
     df_netflix.rename(columns=columnas_renombrar, inplace=True)
-    st.dataframe(df_netflix.head())
 
-    # 2.2 Corrección de tipos de datos
+    # ------------------------------
+    # 2.2 🛠️ Corrección de Tipos de Datos
+    # ------------------------------
     columnas_castear = {
         'Genero': 'category',
         'Titulo': 'category',
         'Edad': 'category',
         'Pais': 'category'
     }
-    df_netflix = df_netflix.astype(columnas_castear)
-    st.dataframe(df_netflix.dtypes)
-    
+    for col, tipo in columnas_castear.items():
+        if col in df_netflix.columns:
+            df_netflix[col] = df_netflix[col].astype(tipo)
 
-    # 2.3 Eliminación de columnas irrelevantes
+    # ------------------------------
+    # 2.3 🧹 Eliminación de Columnas Irrelevantes
+    # ------------------------------
     columnas_a_eliminar = [
         'director', 'show_id', 'cast', 'description',
         'Rational', 'date_added_month', 'date_added_day'
     ]
-    df_netflix.drop(columns=columnas_a_eliminar, inplace=True, errors='ignore')
-    st.dataframe(df_netflix.head())
-    
-    # 2.4 Eliminación de duplicados
+    df_netflix.drop(columns=[col for col in columnas_a_eliminar if col in df_netflix.columns], inplace=True)
+
+    # ------------------------------
+    # 2.4 🔁 Eliminación de Duplicados
+    # ------------------------------
     df_netflix.drop_duplicates(inplace=True)
-    st.write("Filas después de eliminar duplicados:", df_netflix.shape[0])
-    
-    
-    # 2.5 Filtrado de filas con demasiados nulos
-    # Se conservan solo las filas que tienen al menos 9 valores no nulos
+
+    # ------------------------------
+    # 2.5 🧯 Filtrado de Filas con Muchos Nulos
+    # ------------------------------
     df_netflix.dropna(thresh=9, inplace=True)
-    st.write("Filas después del filtrado por nulos:", df_netflix.shape[0])
 
-    # 2.6 Tratamiento de datos faltantes (missing data)
-    st.subheader("🩹 2.6 Tratamiento de Datos Faltantes")
-
-    # Eliminar columna 'Languages' si existe, por alta cantidad de nulos
+    # ------------------------------
+    # 2.6 🩺 Manejo de Datos Faltantes (Missing Data)
+    # ------------------------------
     if 'Languages' in df_netflix.columns:
         df_netflix.drop(columns='Languages', inplace=True)
-        st.write("✅ Columna 'Languages' eliminada por exceso de nulos.")
 
-    # Imputación de columnas categóricas con moda
-    columnas_moda = ['Genero', 'Pais']
-    for col in columnas_moda:
-        if df_netflix[col].isnull().sum() > 0:
+    for col in ['Genero', 'Pais']:
+        if col in df_netflix.columns and df_netflix[col].isnull().sum() > 0:
             df_netflix[col].fillna(df_netflix[col].mode()[0], inplace=True)
-            st.write(f"✅ Imputación por moda aplicada en '{col}'")
-            
-    # Imputación de columnas numéricas con la mediana
-    columnas_numericas = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
-    for col in columnas_numericas:
+
+    num_cols = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
+    for col in num_cols:
         if col in df_netflix.columns:
             df_netflix[col] = pd.to_numeric(df_netflix[col], errors='coerce')
             df_netflix[col].fillna(df_netflix[col].median(), inplace=True)
-            st.write(f"✅ Imputación por mediana aplicada en '{col}'")
 
-    # Mostrar tabla final tras preprocesamiento
-    st.subheader("📋 Vista Previa Final del Dataset Limpio")
-    st.dataframe(df_netflix.head())
+    # ------------------------------
+    # 👁️ Vista Previa de Datos Procesados
+    # ------------------------------
+    try:
+        st.subheader("👁️ Vista previa de los primeros datos procesados")
+        df_vista = df_netflix.select_dtypes(include=['number', 'category', 'object'])
+        st.dataframe(df_vista.head(10))
+    except Exception as e:
+        st.error(f"❌ Error al mostrar la tabla: {e}")st.set_page_config(page_title="Netflix Satisfaction Insights", layout="wide")
+st.title("🎬 Análisis de Satisfacción de Usuarios de Netflix")
+
+# 📁 Subida de archivo
+uploaded_file = st.file_uploader("📂 Sube tu archivo de Excel (.xlsx)", type="xlsx")
+
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+    st.success("✅ Archivo cargado correctamente")
+
+    # ------------------------------
+    # 2.1 🧩 Combinación de Datos
+    # ------------------------------
+    columnas_renombrar = {
+        'Gender': 'Genero',
+        'Age': 'Edad',
+        'title': 'Titulo',
+        'country': 'Pais'
+    }
+    df_netflix = df.copy()
+    df_netflix.rename(columns=columnas_renombrar, inplace=True)
+
+    # ------------------------------
+    # 2.2 🛠️ Corrección de Tipos de Datos
+    # ------------------------------
+    columnas_castear = {
+        'Genero': 'category',
+        'Titulo': 'category',
+        'Edad': 'category',
+        'Pais': 'category'
+    }
+    for col, tipo in columnas_castear.items():
+        if col in df_netflix.columns:
+            df_netflix[col] = df_netflix[col].astype(tipo)
+
+    # ------------------------------
+    # 2.3 🧹 Eliminación de Columnas Irrelevantes
+    # ------------------------------
+    columnas_a_eliminar = [
+        'director', 'show_id', 'cast', 'description',
+        'Rational', 'date_added_month', 'date_added_day'
+    ]
+    df_netflix.drop(columns=[col for col in columnas_a_eliminar if col in df_netflix.columns], inplace=True)
+
+    # ------------------------------
+    # 2.4 🔁 Eliminación de Duplicados
+    # ------------------------------
+    df_netflix.drop_duplicates(inplace=True)
+
+    # ------------------------------
+    # 2.5 🧯 Filtrado de Filas con Muchos Nulos
+    # ------------------------------
+    df_netflix.dropna(thresh=9, inplace=True)
+
+    # ------------------------------
+    # 2.6 🩺 Manejo de Datos Faltantes (Missing Data)
+    # ------------------------------
+    if 'Languages' in df_netflix.columns:
+        df_netflix.drop(columns='Languages', inplace=True)
+
+    for col in ['Genero', 'Pais']:
+        if col in df_netflix.columns and df_netflix[col].isnull().sum() > 0:
+            df_netflix[col].fillna(df_netflix[col].mode()[0], inplace=True)
+
+    num_cols = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
+    for col in num_cols:
+        if col in df_netflix.columns:
+            df_netflix[col] = pd.to_numeric(df_netflix[col], errors='coerce')
+            df_netflix[col].fillna(df_netflix[col].median(), inplace=True)
+
+    # ------------------------------
+    # 👁️ Vista Previa de Datos Procesados
+    # ------------------------------
+    try:
+        st.subheader("👁️ Vista previa de los primeros datos procesados")
+        df_vista = df_netflix.select_dtypes(include=['number', 'category', 'object'])
+        st.dataframe(df_vista.head(10))
+    except Exception as e:
+        st.error(f"❌ Error al mostrar la tabla: {e}")
     
     
     def plot_outliers(df, column_name):
