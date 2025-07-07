@@ -18,9 +18,160 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.success("✅ Archivo cargado correctamente")
 
-    # Mostrar columnas clave
-    st.subheader("📊 Estructura de datos")
-    st.write(df.head())
+
+
+
+
+    
+
+columnas_renombrar = {'Gender': 'Genero', 'Age': 'Edad', 'title': 'Titulo', 'country': 'Pais'}
+df_netflix.rename(columns=columnas_renombrar, inplace=True)
+
+# 2.2 Corrección de tipos de datos
+columnas_castear = {'Genero': 'category', 'Titulo': 'category', 'Edad': 'category', 'Pais': 'category'}
+df_netflix = df_netflix.astype(columnas_castear)
+
+# 2.3 Eliminar columnas irrelevantes
+df_netflix.drop(columns=['director', 'show_id', 'cast', 'description', 'Rational', 'date_added_month', 'date_added_day'], inplace=True)
+
+# 2.4 Eliminar duplicados
+df_netflix.drop_duplicates(inplace=True)
+
+# 2.5 Manejo de Nulos
+# Filtrado por filas con al menos 9 datos válidos
+df_netflix.dropna(thresh=9, inplace=True)
+
+# Eliminar columna 'Languages' por exceso de nulos
+if 'Languages' in df_netflix.columns:
+    df_netflix.drop(columns='Languages', inplace=True)
+
+# Imputación con moda
+for col in ['Genero', 'Pais']:
+    if df_netflix[col].isnull().sum() > 0:
+        df_netflix[col].fillna(df_netflix[col].mode()[0], inplace=True)
+
+# Imputación de numéricos con mediana
+num_cols = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
+for col in num_cols:
+    if col in df_netflix.columns:
+        df_netflix[col] = pd.to_numeric(df_netflix[col], errors='coerce')
+        df_netflix[col].fillna(df_netflix[col].median(), inplace=True)
+
+# ------------------------------
+# 3️⃣ Análisis de Outliers
+# ------------------------------
+def plot_outliers(df, column_name):
+    plt.figure(figsize=(6, 4))
+    sns.boxplot(y=df[column_name])
+    plt.title(f'Outliers en {column_name}')
+    plt.grid(True)
+    plt.show()
+
+    Q1 = df[column_name].quantile(0.25)
+    Q3 = df[column_name].quantile(0.75)
+    IQR = Q3 - Q1
+    lim_inf = Q1 - 1.5 * IQR
+    lim_sup = Q3 + 1.5 * IQR
+    outliers = df[(df[column_name] < lim_inf) | (df[column_name] > lim_sup)]
+    porcentaje = (len(outliers) / len(df)) * 100
+    print(f"{column_name} - Outliers: {len(outliers)} ({porcentaje:.2f}%)")
+
+for col in ['duration (min)', 'Cost Per Month - Premium ($)', 'No. of TV Shows']:
+    if col in df_netflix.columns:
+        df_netflix[col] = pd.to_numeric(df_netflix[col], errors='coerce')
+        plot_outliers(df_netflix, col)
+
+# ------------------------------
+# 4️⃣ Transformación de Datos
+# ------------------------------
+from sklearn.preprocessing import LabelEncoder
+
+# Codificar columnas categóricas con LabelEncoder
+df_encoded = df_netflix.copy()
+encoder = LabelEncoder()
+
+mappings = {}
+for col in ['Genero', 'Edad']:
+    df_encoded[col] = encoder.fit_transform(df_encoded[col].astype(str))
+    mappings[col] = dict(zip(encoder.classes_, encoder.transform(encoder.classes_)))
+
+# ------------------------------
+# 5️⃣ Análisis Exploratorio (EDA) Visual
+# ------------------------------
+
+# Histograma de variables numéricas
+numeric_columns = df_encoded.select_dtypes(include=['float64', 'int64']).columns
+num_columns = len(numeric_columns)
+num_rows = (num_columns // 5) + (num_columns % 5 > 0)
+
+plt.figure(figsize=(15, 10))
+for i, col in enumerate(numeric_columns, 1):
+    plt.subplot(num_rows, 5, i)
+    sns.histplot(df_encoded[col], kde=True, color='skyblue', bins=20)
+    plt.title(f'{col}')
+    plt.tight_layout()
+plt.show()
+
+# ------------------------------
+# 6️⃣ Insights Visuales Clave
+# ------------------------------
+
+# 1. Género del contenido vs Satisfacción
+plt.figure(figsize=(10,6))
+sns.boxplot(x='Genre_content', y='Satisfaction_score', data=df_netflix)
+plt.title('🎭 Influencia del Género en la Satisfacción')
+plt.xticks(rotation=90)
+plt.show()
+
+# 2. Duración vs Satisfacción
+plt.figure(figsize=(10,6))
+sns.scatterplot(x='duration (min)', y='Satisfaction_score', data=df_netflix)
+plt.title('⏱️ Duración del Contenido vs Satisfacción')
+plt.show()
+
+# 3. Frecuencia de consumo vs Satisfacción
+plt.figure(figsize=(10,6))
+sns.barplot(x='Freq', y='Satisfaction_score', data=df_netflix, palette='Blues_d')
+plt.title('🔁 Frecuencia de Consumo vs Satisfacción')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# 4. Género del usuario vs Satisfacción
+plt.figure(figsize=(10,6))
+sns.boxplot(x='Genero', y='Satisfaction_score', data=df_netflix)
+plt.title('👤 Satisfacción según Género del Usuario')
+plt.show()
+
+# 5. Edad y satisfacción por género
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='Edad', y='Satisfaction_score', hue='Genero', data=df_netflix, palette='Set2', alpha=0.7)
+plt.title('🎯 Edad vs Satisfacción por Género')
+plt.xlabel('Edad')
+plt.ylabel('Satisfaction Score')
+plt.show()
+
+# 6. IMDB Score vs Satisfacción
+if 'imdb_score' in df_netflix.columns:
+    plt.figure(figsize=(10,6))
+    sns.scatterplot(x='imdb_score', y='Satisfaction_score', data=df_netflix)
+    plt.title('⭐ Calificación IMDB vs Satisfacción')
+    plt.show()
+
+# ------------------------------
+# 🎉 Fin del Análisis Preliminar
+# ------------------------------
+
+print("✅ Análisis Exploratorio y Preprocesamiento completado.")
+
+
+
+
+
+
+
+
+
 
     # Insights
     st.header("🔍 Insights")
