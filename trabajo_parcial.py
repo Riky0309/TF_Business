@@ -101,24 +101,24 @@ if uploaded_file is not None:
     else:
         st.warning("❗ Faltan columnas 'Freq' o 'Satisfaction_score'")
 
-    if "Gender" in df.columns and "Satisfaction_score" in df.columns:
+    if "Genero" in df.columns and "Satisfaction_score" in df.columns:
         st.subheader("4️⃣ Satisfacción según el género del usuario")
-        df_clean = df.dropna(subset=["Gender", "Satisfaction_score"]).copy()
-        df_clean["Gender"] = df_clean["Gender"].astype(str)
+        df_clean = df.dropna(subset=["Genero", "Satisfaction_score"]).copy()
+        df_clean["Genero"] = df_clean["Genero"].astype(str)
         fig, ax = plt.subplots(figsize=(8,5))
-        sns.boxplot(x='Gender', y='Satisfaction_score', data=df_clean, ax=ax)
+        sns.boxplot(x='Genero', y='Satisfaction_score', data=df_clean, ax=ax)
         st.pyplot(fig)
     else:
         st.warning("❗ Faltan columnas 'Gender' o 'Satisfaction_score'")
 
-    if "Age" in df.columns and "Satisfaction_score" in df.columns:
+    if "Edad" in df.columns and "Satisfaction_score" in df.columns:
         st.subheader("5️⃣ Influencia de la edad en la satisfacción del usuario")
-        df_clean = df.dropna(subset=["Age", "Satisfaction_score"]).copy()
-        df_clean["Age"] = pd.to_numeric(df_clean["Age"], errors="coerce")
+        df_clean = df.dropna(subset=["Edad", "Satisfaction_score"]).copy()
+        df_clean["Edad"] = pd.to_numeric(df_clean["Edad"], errors="coerce")
         df_clean["Satisfaction_score"] = pd.to_numeric(df_clean["Satisfaction_score"], errors="coerce")
-        df_clean = df_clean.dropna(subset=["Age", "Satisfaction_score"])
+        df_clean = df_clean.dropna(subset=["Edad", "Satisfaction_score"])
         fig, ax = plt.subplots(figsize=(10, 6))
-        sns.scatterplot(x="Age", y="Satisfaction_score", data=df_clean, ax=ax)
+        sns.scatterplot(x="Edad", y="Satisfaction_score", data=df_clean, ax=ax)
         ax.set_title("Relación entre Edad y Nivel de Satisfacción")
         st.pyplot(fig)
     else:
@@ -127,7 +127,7 @@ if uploaded_file is not None:
     st.markdown("## \U0001F4C8 4. Modelización del Nivel de Satisfacción")
     st.markdown("A continuación se entrena un modelo **Random Forest** para predecir el nivel de satisfacción del usuario en función de su edad, frecuencia de uso y duración de contenido.")
 
-    cols_modelo = ['Age', 'Freq', 'duration (min)', 'Satisfaction_score']
+    cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
     if all(col in df.columns for col in cols_modelo):
         with st.spinner("\U0001F504 Procesando datos y entrenando el modelo..."):
             df_model = df[cols_modelo].dropna()
