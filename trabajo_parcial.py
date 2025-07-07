@@ -18,30 +18,61 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.success("✅ Archivo cargado correctamente")
 
-    columnas_renombrar = {'Gender': 'Genero', 'Age': 'Edad', 'title': 'Titulo', 'country': 'Pais'}
-    df.rename(columns=columnas_renombrar, inplace=True)
-    df_netflix = df.copy()
+    # 2.1 Combinación de Datos
+    = {
+        'Gender': 'Genero',
+        'Age': 'Edad',
+        'title': 'Titulo',
+        'country': 'Pais'
+    }
 
-    columnas_castear = {'Genero': 'category', 'Titulo': 'category', 'Edad': 'category', 'Pais': 'category'}
+    df_netflix.rename(columns=columnas_renombrar, inplace=True)
+
+    # 2.2 Corrección de tipos de datos
+    columnas_castear = {
+        'Genero': 'category',
+        'Titulo': 'category',
+        'Edad': 'category',
+        'Pais': 'category'
+    }
     df_netflix = df_netflix.astype(columnas_castear)
 
-    df_netflix.drop(columns=['director', 'show_id', 'cast', 'description', 'Rational', 'date_added_month', 'date_added_day'], inplace=True, errors='ignore')
+    # 2.3 Eliminación de columnas irrelevantes
+    columnas_a_eliminar = [
+        'director', 'show_id', 'cast', 'description',
+        'Rational', 'date_added_month', 'date_added_day'
+    ]
+
+    df_netflix.drop(columns=columnas_a_eliminar, inplace=True, errors='ignore')
+
+    # 2.4 Eliminación de duplicados
     df_netflix.drop_duplicates(inplace=True)
+
+    # 2.5 Filtrado de filas con demasiados nulos
+    # Se conservan solo las filas que tienen al menos 9 valores no nulos
     df_netflix.dropna(thresh=9, inplace=True)
 
+    # 2.6 Tratamiento de datos faltantes (missing data)
+
+    # Eliminar columna 'Languages' si existe, por alta cantidad de nulos
     if 'Languages' in df_netflix.columns:
         df_netflix.drop(columns='Languages', inplace=True)
 
-    for col in ['Genero', 'Pais']:
+    # Imputación de columnas categóricas con moda
+    columnas_moda = ['Genero', 'Pais']
+    for col in columnas_moda:
         if df_netflix[col].isnull().sum() > 0:
             df_netflix[col].fillna(df_netflix[col].mode()[0], inplace=True)
 
-    num_cols = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
-    for col in num_cols:
+    # Imputación de columnas numéricas con la mediana
+    columnas_numericas = ['Cost Per Month - Premium ($)', 'Cost Per Month - Standard ($)']
+    for col in columnas_numericas:
         if col in df_netflix.columns:
             df_netflix[col] = pd.to_numeric(df_netflix[col], errors='coerce')
             df_netflix[col].fillna(df_netflix[col].median(), inplace=True)
 
+    
+    
     def plot_outliers(df, column_name):
         plt.figure(figsize=(6, 4))
         sns.boxplot(y=df[column_name])
