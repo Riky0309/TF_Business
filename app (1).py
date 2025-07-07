@@ -20,7 +20,7 @@ if uploaded_file is not None:
     st.write(df.head())
 
     # Insights
-    st.header("🔍 3. Insights")
+    st.header("🔍 Insights")
 
     # Insight 1
     if "Genre_content" in df.columns and "Satisfaction_score" in df.columns:
@@ -64,3 +64,23 @@ if uploaded_file is not None:
 
 else:
     st.info("🔄 Esperando que subas un archivo .xlsx válido.")
+
+
+
+
+st.header("5️⃣ Insight: ¿Influencia de la edad en la satisfacción?")
+
+if 'Edad' in df_netflix.columns and 'Satisfaction_score' in df_netflix.columns:
+    df_temp = df_netflix[['Edad', 'Satisfaction_score']].dropna()
+    df_temp['Edad'] = pd.to_numeric(df_temp['Edad'], errors='coerce')
+    df_temp['Satisfaction_score'] = pd.to_numeric(df_temp['Satisfaction_score'], errors='coerce')
+    df_temp = df_temp.dropna()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(data=df_temp, x='Edad', y='Satisfaction_score', ax=ax)
+    ax.set_title("Relación entre Edad y Nivel de Satisfacción")
+    st.pyplot(fig)
+else:
+    st.warning("❗ Las columnas 'Edad' o 'Satisfaction_score' no están disponibles.")
+
+
