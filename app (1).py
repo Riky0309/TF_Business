@@ -83,7 +83,7 @@ if uploaded_file is not None:
     st.markdown("## 📈 4. Modelización del Nivel de Satisfacción")
     st.markdown("A continuación se entrena un modelo **Random Forest** para predecir el nivel de satisfacción del usuario en función de su edad, frecuencia de uso y duración de contenido.")
 
-    cols_modelo = ['Edad', 'Freq', 'duration (min)', 'Satisfaction_score']
+    cols_modelo = ['Age', 'Freq', 'duration (min)', 'Satisfaction_score']
     if all(col in df.columns for col in cols_modelo):
         with st.spinner("🔄 Procesando datos y entrenando el modelo..."):
             df_model = df[cols_modelo].dropna()
